@@ -40,7 +40,7 @@ jobs:
          # Parallel builds do not work. Only spend at most 40 minutes on a build.
          # This allows incremental building, so if the build can't be finished within the allotted time
          # it will be resumed from that point in the next build.
-         - $HOME/build_dials/modules/dxtbx/.travis/build-for 40m
+         - $HOME/build_dials/modules/dxtbx/.travis/build-for 3m
 
 before_cache:
   - cd $HOME
