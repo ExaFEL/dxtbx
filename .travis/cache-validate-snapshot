@@ -13,18 +13,20 @@ for file in *; do
     echo File unchanged
     cp -av $file $HOME/build_dials/build/$file
     continue
-  elif [ "$file" = "libtbx_env" ]; then
+  fi
+  if [ "$file" = "libtbx_env" ]; then
     if diff -u <(libtbx.show_env $file) <(libtbx.show_env $HOME/build_dials/build/$file); then
       echo File unchanged
       cp -av $file $HOME/build_dials/build/$file
       continue
-  elif diff -q <(sort < $file) <(sort < $HOME/build_dials/build/$file); then
+    fi
+  fi
+  if diff -q <(sort < $file) <(sort < $HOME/build_dials/build/$file); then
     echo File twirled, but essentially unchanged
     cp -av $file $HOME/build_dials/build/$file
     continue
   fi
-  echo File has changed :(
-
+  echo File has changed
 done
 
 echo Cache is valid
