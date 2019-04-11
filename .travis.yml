@@ -15,6 +15,10 @@ cache:
 jobs:
   include:
     - stage: build
+      before_install:
+         # Validate cache
+         - ./.travis/cache-make-snapshot
+
       install:
          # Setup a base installation
          - ./.travis/setup-base
@@ -38,41 +42,7 @@ jobs:
          # it will be resumed from that point in the next build.
          - $HOME/build_dials/modules/dxtbx/.travis/build-for 40m
 
-    - name: "Syntax validation - Python 2.7"
-      addons: false
-      cache: false
-      script:
-         - python -m compileall -q *
-
-    - name: "Syntax validation - Python 3.7"
-      addons: false
-      cache: false
-      dist: xenial
-      python: 3.7
-      script:
-         - python3 -m compileall -q *
-
-    - stage: test
-      before_script:
-         # Inject DIALS. Again.
-         - rm -rf $HOME/build_dials/modules/dxtbx
-         - mv $HOME/build/cctbx/dxtbx $HOME/build_dials/modules/dxtbx
-
-         # Enter CCTBX environment
-         - cd $HOME/build_dials/build
-         - . setpaths.sh
-
-         # If needed allow up to further 30 minutes worth of building time
-         - $HOME/build_dials/modules/dxtbx/.travis/build-for 30m if_required
-
-         # Add dials-data to environment
-         # - libtbx.pip install dials-data
-
-      script:
-         # Finally. Do what we are here for. Run tests. Yay.
-         - cd $HOME/build_dials/modules/dxtbx
-         - pytest -ra -n 2 --regression
-
 before_cache:
   - cd $HOME
+  - $HOME/build_dials/modules/dxtbx/.travis/cache-validate-snapshot
   - rm -rf $HOME/build_dials/modules/dxtbx

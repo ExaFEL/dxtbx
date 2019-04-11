@@ -1,0 +1,14 @@
+#!/bin/bash
+
+[ -f $HOME/.travis.cache.snapshot/.valid ] || exit 0
+
+cd $HOME/.travis.cache.snapshot
+for file in *; do
+  echo Validating file $file
+  [ -f $HOME/build_dials/build/$file ] || exit 0
+  echo File is valid
+  diff -q $file $HOME/build_dials/build/$file || exit 0
+  cp -a $file $HOME/build_dials/build/$file
+done
+
+echo Cache is valid

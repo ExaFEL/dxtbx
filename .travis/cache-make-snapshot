@@ -1,0 +1,24 @@
+#!/bin/bash
+
+[ -e $HOME/build_dials/build ] || exit 0
+
+mkdir -p $HOME/.travis.cache.snapshot
+
+for file in \
+    include_paths \
+    libtbx_env \
+    .sconsign.dblite \
+    SConstruct \
+    setpaths_all.csh \
+    setpaths_all.sh \
+    setpaths_debug.csh \
+    setpaths_debug.sh \
+    unsetpaths.csh \
+    unsetpaths.sh \
+; do
+  [ -e $HOME/build_dials/build/$file ] || exit 0
+  echo Creating snapshot of $file
+  cp -av $HOME/build_dials/build/$file $HOME/.travis.cache.snapshot
+done
+
+touch $HOME/.travis.cache.snapshot/.valid
