@@ -2,13 +2,29 @@
 
 [ -f $HOME/.travis.cache.snapshot/.valid ] || exit 0
 
+cd $HOME/build_dials/build
+. setpaths.sh
+
 cd $HOME/.travis.cache.snapshot
 for file in *; do
   echo Validating file $file
   [ -f $HOME/build_dials/build/$file ] || exit 0
-  echo File is valid
-  diff $file $HOME/build_dials/build/$file
-  cp -a $file $HOME/build_dials/build/$file
+  if diff -q $file $HOME/build_dials/build/$file; then
+    echo File unchanged
+    cp -av $file $HOME/build_dials/build/$file
+    continue
+  elif [ "$file" = "libtbx_env" ]; then
+    if diff -u <(libtbx.show_env $file) <(libtbx.show_env $HOME/build_dials/build/$file); then
+      echo File unchanged
+      cp -av $file $HOME/build_dials/build/$file
+      continue
+  elif diff -q <(sort < $file) <(sort < $HOME/build_dials/build/$file); then
+    echo File twirled, but essentially unchanged
+    cp -av $file $HOME/build_dials/build/$file
+    continue
+  fi
+  echo File has changed :(
+
 done
 
 echo Cache is valid
