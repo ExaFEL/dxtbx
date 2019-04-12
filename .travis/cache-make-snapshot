@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Make a copy of files that are always modified by any libtbx.configure run
+
 [ -e $HOME/build_dials/build ] || exit 0
 
 mkdir -p $HOME/.travis.cache.snapshot
@@ -17,7 +19,6 @@ for file in \
     unsetpaths.sh \
 ; do
   [ -e $HOME/build_dials/build/$file ] || exit 0
-  echo Creating snapshot of $file
   cp -av $HOME/build_dials/build/$file $HOME/.travis.cache.snapshot
 done
 

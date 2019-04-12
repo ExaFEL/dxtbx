@@ -1,30 +1,28 @@
 #!/bin/bash
 
+# Check files that are always modified by any libtbx.configure run against
+# copies made earlier. If they are all roughly the same, then copy the files
+# back, so that travis does not need to generate and upload a new cache.
+
 [ -f $HOME/.travis.cache.snapshot/.valid ] || exit 0
 
 cd $HOME/build_dials/build
 . setpaths.sh
 
-THIS_IS_FINE=1
 cd $HOME/.travis.cache.snapshot
-for file in *; do
+for file in * .sconsign.dblite; do
   echo Validating file $file
   [ -f $HOME/build_dials/build/$file ] || exit 0
   if [ "$file" = "libtbx_env" ]; then
-    if diff -u <(dxtbx.show_env $file | sort) <(dxtbx.show_env $HOME/build_dials/build/$file | sort); then
-      echo File twirled, but essentially unchanged
+    if diff -q <(dxtbx.show_env $file | sort) <(dxtbx.show_env $HOME/build_dials/build/$file | sort); then
       continue
     fi
-  fi
-  if diff -q <(sort < $file) <(sort < $HOME/build_dials/build/$file); then
-    echo File twirled, but essentially unchanged
+  elif diff -q <(sort < $file) <(sort < $HOME/build_dials/build/$file); then
     continue
   fi
-  echo File has changed
-  THIS_IS_FINE=0
+  echo Leaving files as they are
+  exit 0
 done
 
-if [ "$THIS_IS_FINE" = "1" ]; then
-  echo Cache is still valid, restoring originals
-  cp -av * $HOME/build_dials/build/
-fi
+echo Cache is still valid, restoring originals
+cp -av * .sconsign.dblite $HOME/build_dials/build/
