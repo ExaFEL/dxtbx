@@ -11,7 +11,7 @@ for file in *; do
   echo Validating file $file
   [ -f $HOME/build_dials/build/$file ] || exit 0
   if [ "$file" = "libtbx_env" ]; then
-    if diff -u <(libtbx.show_env $file | sort) <(libtbx.show_env $HOME/build_dials/build/$file | sort); then
+    if diff -u <(dxtbx.show_env $file | sort) <(dxtbx.show_env $HOME/build_dials/build/$file | sort); then
       echo File twirled, but essentially unchanged
       continue
     fi
