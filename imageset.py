@@ -51,7 +51,8 @@ class MemMasker(object):
         return len(self._images)
 
 
-class ImageSetAux(boost.python.injector, ImageSet):
+@boost.python.inject_into(ImageSet)
+class ImageSetAux():
     """
     A class to inject additional methods into the imageset class
 
@@ -238,7 +239,8 @@ class ImageSetLazy(ImageSet):
         return super(ImageSetLazy, self).get_gain(index)
 
 
-class ImageSweepAux(boost.python.injector, ImageSweep):
+@boost.python.inject_into(ImageSweep)
+class ImageSweepAux():
     def __getitem__(self, item):
         """Get an item from the sweep stream.
 
